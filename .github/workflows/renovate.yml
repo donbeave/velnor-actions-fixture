@@ -13,15 +13,21 @@ defaults:
     shell: bash
 
 jobs:
+  matrix-setup:
+    runs-on: ubuntu-latest
+    outputs:
+      configs: ${{ steps.set.outputs.configs }}
+    steps:
+      - id: set
+        run: |
+          echo 'configs=[{"lane":"github","runner":"\"ubuntu-latest\""},{"lane":"velnor","runner":"[\"self-hosted\",\"velnor-target-mvp\"]"}]' >> "$GITHUB_OUTPUT"
+
   renovate:
+    needs: [matrix-setup]
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - lane: github
-            runner: '"ubuntu-latest"'
-          - lane: velnor
-            runner: '["self-hosted","velnor-target-mvp"]'
+        config: ${{ fromJSON(needs.matrix-setup.outputs.configs) }}
     runs-on: ${{ fromJSON(matrix.config.runner) }}
     steps:
       - uses: actions/checkout@v6
