@@ -35,4 +35,6 @@ jobs:
         with:
           configurationFile: .github/renovate.json5
         env:
+          # The PAT named "tailrocks-renovate" (fine-grained, not classic) must be
+          # stored in the repo secret GH_RENOVATE_TOKEN.
           GH_RENOVATE_TOKEN: ${{ secrets.GH_RENOVATE_TOKEN }}
